@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import pojo.Temporada;
 import util.DatabaseConnection;
 
-public class TemporadaDao implements InterfazDao<Temporada> {
+public class TemporadaDao extends ObjetoDao implements InterfazDao<Temporada> {
 	
 	private static Connection connection;
 	
@@ -60,22 +60,43 @@ public class TemporadaDao implements InterfazDao<Temporada> {
 	public void borrar(Temporada t) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	private static Connection openConnection() {
-		DatabaseConnection dbConnection = new DatabaseConnection();
-		connection = dbConnection.getConnection();
-		return connection;
-	}
-	
-	private static void closeConnection() {
+		connection = openConnection();
+		
+		int id = t.getId();
+		
+		String query = "DELETE FROM temporadas WHERE id = ?";
+		
 		try {
-			connection.close();
-			connection = null;
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, id); 
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		closeConnection();
 	}
-
+	
+	/**
+	 * 
+	 * @param serie_id
+	 */
+	public void borrarPorSerie (int serie_id) {
+		connection = openConnection();
+		
+		String query = "DELETE FROM temporadas WHERE serie_id = ?";
+		
+		try {
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, serie_id);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		closeConnection();
+	}
+	
 }
