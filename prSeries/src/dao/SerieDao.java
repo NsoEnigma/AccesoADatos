@@ -32,13 +32,32 @@ public class SerieDao extends ObjetoDao implements InterfazDao<Serie> {
 			ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
+				ArrayList<Temporada> temporadas = new ArrayList<Temporada>();
+				
 				Serie serie = new Serie(
 							rs.getInt("id"),
 							rs.getString("titulo"),
 							rs.getInt("edad"),
 							rs.getString("plataforma"),
 							null
-						);
+				);
+				
+				String query_temporadas = "select * from temporadas where serie_id = ?";
+				PreparedStatement ps_temporadas = connection.prepareStatement(query_temporadas);
+				ps_temporadas.setInt(1, rs.getInt("id")); 
+				ResultSet rs_temporadas = ps_temporadas.executeQuery();
+				
+				while(rs_temporadas.next()) {
+					Temporada temporada = new Temporada(
+								rs_temporadas.getInt("id"),
+								rs_temporadas.getInt("num_temporada"),
+								rs_temporadas.getString("titulo")
+					);
+					temporadas.add(temporada);
+				}
+				
+				serie.setTemporadas(temporadas); 
+				
 				series.add(serie);
 						
 			}
